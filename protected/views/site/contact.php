@@ -34,7 +34,7 @@ $this->pageTitle = 'GigaDB - Contact Us';
                         </div>
                         <div class="subsection">
                             <p>For more information or questions regarding submitting data to GigaDB, please contact us at: <a href="mailto:database@gigasciencejournal.com" target="_blank">database@gigasciencejournal.com</a>.</p>
-                            <p>Fields with <span class="text-danger">*</span> are required.</p>
+                            <p>Fields with <span>*</span> are required.</p>
                         </div>
 
 
@@ -42,9 +42,11 @@ $this->pageTitle = 'GigaDB - Contact Us';
                         <? $form = $this->beginWidget('CActiveForm', array('htmlOptions' => array('class' => 'form contact-form'))); ?>
                         <div class="col-xs-7">
                             <div class="form-group">
-                                <?= $form->labelEx($model, 'name', array('class' => 'text-danger')); ?>
-                                <?= $form->textField($model, 'name', array('class' => 'form-control')); ?>
-                                <?php echo $form->error($model, 'name'); ?>
+                                <?= $form->labelEx($model, 'name', array('class' => 'control-label')); ?>
+                                <?= $form->textField($model, 'name', array('class' => 'form-control', 'required' => true, 'aria-required' => 'true', 'aria-describedby' => $model->hasErrors('name') ? 'nameError' : null)); ?>
+                                <div id="nameError">
+                                    <?php echo $form->error($model, 'name'); ?>
+                                </div>
 
                             </div>
                         </div>
@@ -53,8 +55,10 @@ $this->pageTitle = 'GigaDB - Contact Us';
                             <div class="form-group">
                                 <?= $form->labelEx($model, 'email', array('class' => 'control-label')); ?>
 
-                                <?= $form->textField($model, 'email', array('class' => 'form-control')); ?>
-                                <?php echo $form->error($model, 'email'); ?>
+                                <?= $form->textField($model, 'email', array('class' => 'form-control', 'required' => true, 'aria-required' => 'true', 'aria-describedby' => $model->hasErrors('email') ? 'emailError' : null)); ?>
+                                <div id="emailError">
+                                    <?php echo $form->error($model, 'email'); ?>
+                                </div>
                             </div>
                         </div>
 
@@ -62,8 +66,10 @@ $this->pageTitle = 'GigaDB - Contact Us';
                             <div class="form-group">
                                 <?= $form->labelEx($model, 'subject', array('class' => 'control-label')); ?>
 
-                                <?= $form->textField($model, 'subject', array('class' => 'form-control')); ?>
-                                <?php echo $form->error($model, 'subject'); ?>
+                                <?= $form->textField($model, 'subject', array('class' => 'form-control', 'required' => true, 'aria-required' => 'true', 'aria-describedby' => $model->hasErrors('subject') ? 'subjectError' : null)); ?>
+                                <div id="subjectError">
+                                    <?php echo $form->error($model, 'subject'); ?>
+                                </div>
                             </div>
                         </div>
 
@@ -71,8 +77,10 @@ $this->pageTitle = 'GigaDB - Contact Us';
                             <div class="form-group">
                                 <?= $form->labelEx($model, 'body', array('class' => 'control-label')); ?>
 
-                                <?= $form->textArea($model, 'body', array('rows' => 5, 'class' => 'form-control')); ?>
-                                <?php echo $form->error($model, 'body'); ?>
+                                <?= $form->textArea($model, 'body', array('rows' => 5, 'class' => 'form-control', 'required' => true, 'aria-required' => 'true', 'aria-describedby' => $model->hasErrors('body') ? 'bodyError' : null)); ?>
+                                <div id="bodyError">
+                                    <?php echo $form->error($model, 'body'); ?>
+                                </div>
                             </div>
                         </div>
 
@@ -81,15 +89,17 @@ $this->pageTitle = 'GigaDB - Contact Us';
                                 <?php echo $form->labelEx($model, 'verifyCode'); ?>
 
                                 <div style="width:100%">
-                                    <img style="width:200px;" src="<?php echo Yii::app()->captcha->output(); ?>" alt="CAPTCHA, Type the word displayed above">
+                                    <img style="width:200px;" src="<?php echo Yii::app()->captcha->output(); ?>" alt="Type the word in the image">
                                 </div>
                                 <br>
                                 <br>
-                                <?php echo $form->textField($model, 'verifyCode', array('class' => 'form-control')); ?>
-                                <div class="hint">Please enter the letters as they are shown in the image above.
+                                <?php echo $form->textField($model, 'verifyCode', array('class' => 'form-control', 'required' => true, 'aria-required' => 'true', 'aria-describedby' => $model->hasErrors('verifyCode') ? 'verifyCodeHint verifyCodeError' : 'verifyCodeHint')); ?>
+                                <div class="hint" id="verifyCodeHint">Please enter the letters as they are shown in the image above.
                                     <br />Letters are case-sensitive.
                                 </div>
-                                <?php echo $form->error($model, 'verifyCode'); ?>
+                                <div id="verifyCodeError">
+                                    <?php echo $form->error($model, 'verifyCode'); ?>
+                                </div>
                             </div>
                         </div>
 
