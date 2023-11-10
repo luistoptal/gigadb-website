@@ -10,6 +10,7 @@ $this->widget(
     'CustomGridView',
     [
         'id'            => 'dataset-grid',
+        'shouldPreserveScroll'    => true,
         'dataProvider'  => $model,
         'itemsCssClass' => 'table table-bordered',
         'columns'       => [

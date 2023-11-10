@@ -31,6 +31,8 @@ Yii::import('zii.widgets.grid.CGridView');
 class CustomGridView extends CGridView
 {
 
+  public bool $shouldPreserveScroll = false;
+
   public static function getDefaultActionButtonsConfig()
   {
     return array(
@@ -90,6 +92,12 @@ class CustomGridView extends CGridView
     $jsFile = Yii::getPathOfAlias('application.js.custom-grid-view') . '.js';
     $jsUrl = Yii::app()->assetManager->publish($jsFile);
     Yii::app()->clientScript->registerScriptFile($jsUrl, CClientScript::POS_END);
+
+    if ($this->shouldPreserveScroll) {
+      $jsFile = Yii::getPathOfAlias('application.js.preserve-scrolling') . '.js';
+      $jsUrl = Yii::app()->assetManager->publish($jsFile);
+      Yii::app()->clientScript->registerScriptFile($jsUrl, CClientScript::POS_END);
+    }
 
     parent::init();
   }
