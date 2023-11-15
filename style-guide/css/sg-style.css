@@ -538,3 +538,41 @@ body {
   width: 100%;
   z-index: 100;
 }
+
+.sg-a11y-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 1rem;
+}
+
+.sg-a11y-block {
+  border: 1px solid #ddd;
+  width: 90%;
+  padding: 1rem;
+}
+.sg-a11y-block h3 {
+  font-size: 16px;
+  margin-bottom: 1em;
+  margin-top: 0;
+}
+.sg-a11y-block h3, .sg-a11y-block p {
+  color: inherit;
+}
+
+.sg-fixed-btns-container {
+  position: relative;
+  width: 100%;
+  margin-inline: 20px;
+  height: 100px;
+  margin-top: -40px;
+}
+.sg-fixed-btns-container .fixed-btn-left {
+  position: absolute;
+  left: 0;
+  margin-left: 20px;
+}
+.sg-fixed-btns-container .fixed-btn-right {
+  position: absolute;
+  right: 0;
+  margin-right: 20px;
+}
