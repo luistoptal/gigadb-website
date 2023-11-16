@@ -11,6 +11,7 @@ $this->widget(
     [
         'id'            => 'dataset-grid',
         'shouldPreserveScroll'    => true,
+        'enableSorting' => false,
         'dataProvider'  => $model,
         'itemsCssClass' => 'table table-bordered',
         'columns'       => [
