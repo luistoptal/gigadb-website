@@ -1,9 +1,12 @@
 <template>
-  <div id="uppy" class="uploader">
-    <form class="uppy-dataset-metadata-form">
-      <input id="dataset" type="hidden" :value="identifier">
-    </form>
-    <div class="uppy-drag-drop-area"></div>
+  <div>
+    <uploaded-files :uploads="uploads" @replace-file="handleReplaceFile" />
+    <div id="uppy" class="uploader">
+      <form class="uppy-dataset-metadata-form">
+        <input id="dataset" type="hidden" :value="identifier">
+      </form>
+      <div class="uppy-drag-drop-area"></div>
+    </div>
   </div>
 </template>
 
@@ -14,19 +17,33 @@ import Form from '@uppy/form'
 import Tus from '@uppy/tus'
 import { Checksum } from '../plugins/uppy-checksum.js'
 import { eventBus } from '../index.js'
+import UploadedFiles from './UploadedFiles.vue'
 
 export default {
+  components: {
+    UploadedFiles
+  },
   props: {
     identifier: {
       type: String,
     },
     endpoint: {
       type: String,
+    },
+    uploads: {
+      type: Array,
+      default: () => []
     }
   },
   data: function () {
     return {
       uppy: null
+    }
+  },
+  methods: {
+    handleReplaceFile: function (id) {
+      console.log('call handleReplaceFile');
+      console.log(id)
     }
   },
   mounted: function () {
