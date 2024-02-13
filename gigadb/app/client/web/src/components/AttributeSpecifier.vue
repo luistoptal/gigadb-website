@@ -58,13 +58,13 @@ export default {
   methods: {
     addNewAttribute(event) {
       event.preventDefault()
-      this.attributes.push({ name: this.name, value: this.value, unit: this.unit })
+      this.attributes.push({ name: this.name, value: this.value, unit: this.unit }) // WARN this is mutating the prop array elements and thus it's mutating parent data
       this.name = ''
       this.value = ''
       this.unit = ''
     },
     removeAttribute(index) {
-      this.attributes.splice(index, 1);
+      this.attributes.splice(index, 1); // WARN this is mutating the prop array elements and thus it's mutating parent data
       console.log("remove attribute at " + index)
     }
   }

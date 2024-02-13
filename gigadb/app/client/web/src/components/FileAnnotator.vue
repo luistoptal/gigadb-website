@@ -69,7 +69,8 @@
         With this method of bulk metadata upload, you can also associate references to existing samples and to up to five
         existing file attributes. (if the sample or the file attribute do not exist in the GigaDB, they are simply
         ignored).</p>
-      <div class="row">
+        <!-- SheetMetadataUploader -->
+        <div class="row">
         <div class="col-md-8">
           <form id="bulkUploadForm" method="post" enctype="multipart/form-data"
             class="form-horizontal well form-bulk-upload">
@@ -118,6 +119,7 @@
 
 
     <div v-if="uploadedFiles.length > 0">
+      <!-- AttributesDrawer -->
       <el-drawer :title="`Add attributes to file: ${uploadedFiles[drawerIndex].name}`" :visible.sync="attrPanel"
         :with-header="true" ref="attrPanel" :before-close="handleAttrClose" destroy-on-close>
         <span>
@@ -141,6 +143,7 @@
           </div>
         </div>
       </el-drawer>
+      <!-- SamplesDrawer -->
       <el-drawer :title="`Add samples to file: ${uploadedFiles[drawerIndex].name}`" :visible.sync="samplePanel"
         :with-header="true" ref="samplesPanel" destroy-on-close>
         <span>
