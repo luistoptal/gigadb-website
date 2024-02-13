@@ -72,6 +72,7 @@
         <!-- SheetMetadataUploader -->
         <div class="row">
         <div class="col-md-8">
+          <!-- WARN this form is nested inside another form -->
           <form id="bulkUploadForm" method="post" enctype="multipart/form-data"
             class="form-horizontal well form-bulk-upload">
             <div class="form-group">
@@ -248,18 +249,16 @@ export default {
     }
   },
   computed: {
-    isMetadataComplete: function () {
+    isMetadataComplete: function() {
       return this.metaComplete.length === this.uploadedFiles.length
     }
   },
   methods: {
     fieldHasChanged(uploadIndex) {
       if (this.uploadedFiles[uploadIndex].datatype != undefined && this.uploadedFiles[uploadIndex].datatype.length > 0 && this.uploadedFiles[uploadIndex].description != undefined && this.uploadedFiles[uploadIndex].description.length > 0) {
-        this.metaComplete[uploadIndex] = true
+        this.metaComplete.includes(uploadIndex) || this.metaComplete.push(uploadIndex)
       } else {
-        this.metaComplete = this.metaComplete.filter(
-          (x, i) => i !== uploadIndex
-        )
+        this.metaComplete = this.metaComplete.filter(val => val !== uploadIndex)
         eventBus.$emit('metadata-ready-status', false)
       }
 
@@ -270,9 +269,9 @@ export default {
       }
     },
     checkFieldsState() {
-      for (var uploadIndex = 0; uploadIndex < this.uploadedFiles.length; uploadIndex++) {
+      for (let uploadIndex = 0; uploadIndex < this.uploadedFiles.length; uploadIndex++) {
         if (this.uploadedFiles[uploadIndex].datatype != undefined && this.uploadedFiles[uploadIndex].datatype.length > 0 && this.uploadedFiles[uploadIndex].description != undefined && this.uploadedFiles[uploadIndex].description.length > 0) {
-          this.metaComplete[uploadIndex] = true
+          this.metaComplete.includes(uploadIndex) || this.metaComplete.push(uploadIndex)
           // console.log(`all fields complete for upload ${uploadIndex}`)
         }
       }
