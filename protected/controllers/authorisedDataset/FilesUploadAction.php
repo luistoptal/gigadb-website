@@ -43,7 +43,8 @@ class FilesUploadAction extends CAction
         $this->getController()->render("filesUpload", array(
         	"identifier" => $id, 
         	"tusd_path" => Yii::$app->params['dataset_filedrop']['tusd_path'],
-        	"uploadsCount" => count($uploadedFiles)
+        	"uploadsCount" => count($uploadedFiles),
+          "uploads" => $uploadedFiles,
         ));
     }
 }

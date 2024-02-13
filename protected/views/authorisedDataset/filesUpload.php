@@ -14,7 +14,11 @@
             </header>
             <div>
                 <section class="span6">
-                    <file-uploader identifier="<?= $identifier ?>" endpoint="<?php echo $tusd_path ?>" />
+                    <file-uploader
+                        identifier="<?= $identifier ; ?>"
+                        endpoint="<?php echo $tusd_path ; ?>"
+                        :uploads='<?php echo json_encode($uploads) ?>'
+                    />
                 </section>
                 <aside class="span4">
                     <div class="panel panel-success" style="margin:3em;width:100%">
