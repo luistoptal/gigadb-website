@@ -1,5 +1,5 @@
 <template>
-  <div class="sr-only" :aria-live="politeness">
+  <div :class="[show || 'sr-only']" :aria-live="politeness">
     {{ liveMessage }}
   </div>
 </template>
@@ -18,6 +18,11 @@ export default {
       validator: function (value) {
         return ["off", "polite", "assertive"].includes(value);
       }
+    },
+    // useful for testing
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

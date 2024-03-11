@@ -1,5 +1,6 @@
 <template>
   <div>
+    <live-message :message="liveMessage" />
     <div class="mb-20">
       <p>Please, use this table to annotate the files you've just uploaded with metadata. Once you're done
         with mandatory
@@ -14,10 +15,12 @@
         <thead>
           <tr>
             <th scope="col">File Name</th>
-            <th scope="col" id="dataTypeTh">Data Type<span class="sr-only"> required</span><span aria-hidden="true">*</span></th>
+            <th scope="col" id="dataTypeTh">Data Type<span class="sr-only"> required</span><span
+                aria-hidden="true">*</span></th>
             <th scope="col">Format</th>
             <th scope="col">Size</th>
-            <th scope="col" id="descriptionTh">Description<span class="sr-only"> required</span><span aria-hidden="true">*</span></th>
+            <th scope="col" id="descriptionTh">Description<span class="sr-only"> required</span><span
+                aria-hidden="true">*</span></th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -25,7 +28,7 @@
           <tr v-for="(upload, index) in uploadedFiles" :key="`${upload.id}-uploadedfiles`">
             <td><span :id="`${upload.id}File`" data-toggle="tooltip" data-placement="bottom"
                 :title="`md5:${upload.initial_md5}`">{{
-                  upload.name }}</span>
+      upload.name }}</span>
               <input type="hidden" :name="`Upload[${upload.id}][name]`" :value="upload.name">
             </td>
             <td>
@@ -62,8 +65,9 @@
                   Sample IDs
                 </el-button> -->
                 <el-button :id="`upload-${index + 1}-delete`" :class="`delete-button-${index}`" type="danger"
-                  icon="el-icon-delete" @click="deleteUpload(index, upload.id)" circle
-                  :aria-label="`delete file ${upload.name}`"></el-button>
+                  :icon="deletingIds.includes(upload.id) ? 'el-icon-loading' : 'el-icon-delete'"
+                  @click="deleteUpload(index, upload.id)" circle :aria-label="deletingIds.includes(upload.id) ? `deleting file ${upload.name}` : `delete file ${upload.name}`"
+                  :aria-disabled="deletingIds.includes(upload.id) ? 'true' : 'false'"></el-button>
               </div>
             </td>
           </tr>
@@ -80,7 +84,8 @@
         </div>
       </div>
       <div class="btns-row btns-row-end">
-        <a :href="`/authorisedDataset/uploadFiles/id/${identifier}`" class="btn background-btn-o">Back to File Upload</a>
+        <a :href="`/authorisedDataset/uploadFiles/id/${identifier}`" class="btn background-btn-o">Back to File
+          Upload</a>
         <file-annotator-submit-button :disabled="!isMetadataComplete" />
       </div>
     </form>
@@ -114,7 +119,8 @@
         :with-header="true" destroy-on-close>
         <div class="attributes-drawer-body">
           <span>
-            <attribute-specifier id="attributes-form" :fileAttributes="fileAttributes[selectedUpload]" :availableAttributes="availableAttributes" />
+            <attribute-specifier id="attributes-form" :fileAttributes="fileAttributes[selectedUpload]"
+              :availableAttributes="availableAttributes" />
           </span>
           <div class="container-fluid">
             <div class="panel tips-panel panel-drawer-tips">
@@ -195,6 +201,8 @@ import FileAnnotatorSubmitButton from './FileAnnotatorSubmitButton.vue'
 import AccessibleDrawer from './AccessibleDrawer.vue'
 import BulkMetadataUpload from './BulkMetadataUpload.vue'
 import FileAnnotatorTipsPanel from './FileAnnotatorTipsPanel.vue'
+import LiveMessage from './LiveMessage.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -203,7 +211,8 @@ export default {
     "file-annotator-submit-button": FileAnnotatorSubmitButton,
     "accessible-drawer": AccessibleDrawer,
     "bulk-metadata-upload": BulkMetadataUpload,
-    "file-annotator-tips-panel": FileAnnotatorTipsPanel
+    "file-annotator-tips-panel": FileAnnotatorTipsPanel,
+    "live-message": LiveMessage
   },
   props: {
     identifier: { type: String }, // Unused?
@@ -232,7 +241,9 @@ export default {
       samplePanel: false,
       drawerIndex: 0,
       selectedUpload: -1,
-      showTrapFocus: false
+      showTrapFocus: false,
+      deletingIds: [],
+      liveMessage: ''
     }
   },
   computed: {
@@ -263,9 +274,24 @@ export default {
       this.selectedUpload = uploadId
       this.attrPanel = !this.attrPanel
     },
-    deleteUpload(uploadIndex, uploadId) {
-      this.uploadedFiles.splice(uploadIndex, 1)
-      this.filesToDelete.push(uploadId)
+    async deleteUpload(uploadIndex, uploadId) {
+      if (this.deletingIds.includes(uploadId)) {
+        return
+      }
+      this.deletingIds.push(uploadId)
+      try {
+        await axios.delete(`/files/${uploadId}`)
+
+        this.liveMessage = `File ${this.uploadedFiles[uploadIndex].name} deleted successfully`
+        this.uploadedFiles.splice(uploadIndex, 1);
+        this.filesToDelete.push(uploadId);
+      } catch (error) {
+        this.$notify.error({
+          message: `There was an error deleting file ${this.uploadedFiles[uploadIndex].name}`,
+        });
+      } finally {
+        this.deletingIds = this.deletingIds.filter(id => id !== uploadId)
+      }
     },
 
     // Sample ID methods:
