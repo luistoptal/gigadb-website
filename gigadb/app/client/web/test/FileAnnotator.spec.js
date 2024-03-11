@@ -92,6 +92,8 @@ describe('FileAnnotator', function () {
 
 	it('should take file from uploads and add to delete list when clicking delete', function () {
 		const wrapper = this.renderedComponent
+    // NOTE omit the part where the axios call is made and call directly the method that modifies the component data
+		spyOn(wrapper.vm, 'deleteUpload').and.callFake(wrapper.vm.handleLocalDelete)
 		wrapper.findAll('.el-button--danger').at(0).trigger('click')
 		return wrapper.vm.$nextTick().then(function () {
 			expect(wrapper.vm.uploadedFiles.length).toBe(1)

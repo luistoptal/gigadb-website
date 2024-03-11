@@ -66,7 +66,8 @@
                 </el-button> -->
                 <el-button :id="`upload-${index + 1}-delete`" :class="`delete-button-${index}`" type="danger"
                   :icon="deletingIds.includes(upload.id) ? 'el-icon-loading' : 'el-icon-delete'"
-                  @click="deleteUpload(index, upload.id)" circle :aria-label="deletingIds.includes(upload.id) ? `deleting file ${upload.name}` : `delete file ${upload.name}`"
+                  @click="deleteUpload(index, upload.id)" circle
+                  :aria-label="deletingIds.includes(upload.id) ? `deleting file ${upload.name}` : `delete file ${upload.name}`"
                   :aria-disabled="deletingIds.includes(upload.id) ? 'true' : 'false'"></el-button>
               </div>
             </td>
@@ -274,17 +275,21 @@ export default {
       this.selectedUpload = uploadId
       this.attrPanel = !this.attrPanel
     },
+    handleLocalDelete(uploadIndex, uploadId) {
+      this.uploadedFiles.splice(uploadIndex, 1);
+      this.filesToDelete.push(uploadId);
+    },
     async deleteUpload(uploadIndex, uploadId) {
       if (this.deletingIds.includes(uploadId)) {
         return
       }
       this.deletingIds.push(uploadId)
       try {
+        // NOTE this endpoint is expected to be implemented in a future PR, see #1705
         await axios.delete(`/files/${uploadId}`)
 
         this.liveMessage = `File ${this.uploadedFiles[uploadIndex].name} deleted successfully`
-        this.uploadedFiles.splice(uploadIndex, 1);
-        this.filesToDelete.push(uploadId);
+        this.handleLocalDelete(uploadIndex, uploadId)
       } catch (error) {
         this.$notify.error({
           message: `There was an error deleting file ${this.uploadedFiles[uploadIndex].name}`,
