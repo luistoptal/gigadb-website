@@ -32,15 +32,24 @@
 				'maxlength' => 255
 			]
 		]);
-		$this->widget('application.components.controls.TextField', [
-			'form' => $form,
-			'model' => $model,
-			'attributeName' => 'image_location',
-			'inputOptions' => [
-				'maxlength' => 100
-			]
-		]);
+    // field replaced by vue widget
+		// $this->widget('application.components.controls.TextField', [
+		// 	'form' => $form,
+		// 	'model' => $model,
+		// 	'attributeName' => 'image_location',
+		// 	'inputOptions' => [
+		// 		'maxlength' => 100
+		// 	]
+		// ]);
 		?>
+
+    <div id="vue-client_project-image-location">
+      display here vue widget
+    </div>
+    <div>
+      <script type="module" src="http://localhost:5173/@vite/client"></script>
+      <script type="module" src="http://localhost:5173/src/main.ts"></script>
+    </div>
 
 		<div class="pull-right btns-row">
 			<a href="/adminProject/admin" class="btn background-btn-o">Cancel</a>

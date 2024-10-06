@@ -705,6 +705,23 @@ services:
       - le_config:/ca
     command: --domains '*.gigasciencejournal.com'
 
+  # Vite dev server for project image location
+  vite-project-image-location-dev:
+    build:
+      context: ${APPLICATION}/vite
+      args:
+        - NODE_VERSION=$NODE_VERSION
+    volumes:
+      # share host source code with the container to allow hot-reloading
+      - ${APPLICATION}/vite:/app:delegated
+      # node_modules within the container
+      - vite-project-image-location-node-modules:/app/node_modules
+    shm_size: '1gb' # to avoid a known issue
+    ports:
+      - 5173:5173
+    command: >
+      sh -c "npm install && npm run dev"
+
 networks:
   web-tier:
     driver: bridge
@@ -718,3 +735,4 @@ volumes:
   le_config:
   le_webrootpath:
   portainer_data:
+  vite-project-image-location-node-modules:

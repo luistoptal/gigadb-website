@@ -1,0 +1,9 @@
+# Using npm. An alternative would be to use bun (a faster bundler).
+ARG NODE_VERSION
+FROM node:${NODE_VERSION}-bullseye-slim
+WORKDIR /app
+COPY package*.json .
+RUN npm ci
+COPY . .
+EXPOSE 5173
+CMD ["npm", "run", "dev"]
