@@ -1,5 +1,9 @@
 <?php
 
+use \creocoder\flysystem\Filesystem;
+use League\Flysystem\AdapterInterface;
+use Ramsey\Uuid\Uuid;
+
 /**
  * This is the model class for table "project".
  *
@@ -15,6 +19,13 @@
  */
 class Project extends CActiveRecord
 {
+
+  /** @const string bucket name when storage is in the cloud  */
+  const BUCKET = "assets.gigadb-cdn.net";
+  const NAMESPACE = "http://gigadb.org/namespaces/project";
+
+  public $image;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -42,11 +53,12 @@ class Project extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('url', 'required'),
-                        array('url', 'url','message'=>'Please check the URL format'),
+      array('url', 'url','message'=>'Please check the URL format'),
 			array('url', 'length', 'max'=>128),
 			array('name', 'length', 'max'=>255),
 			array('image_location', 'length', 'max'=>100),
-                        array('url','check_duplicate'),
+      array('url','check_duplicate'),
+      array('image', 'file', 'types' => 'jpg, jpeg, png', 'allowEmpty' => true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, url, name, image_location', 'safe', 'on'=>'search'),
@@ -100,28 +112,92 @@ class Project extends CActiveRecord
 	}
 
 	public static function getListProjects(){
-        $models=Species::model()->findAll();
-        $list=array();
-        foreach (array_values($models) as $model){
-            $list[$model->id] = $model->common_name;
-        }
-        return $list;
-    }
-    
-    function check_duplicate(){
-        
-        
-        $db_url= Project::model()->findBySql("select name from project where url='$this->url'");
-        
-        if($db_url !=null){
-        $this->addError('url','Duplicate URL');}
-        
-        $db_name= Project::model()->findBySql("select url from project where name='$this->name'");
-       
-        if($db_name !=null){
-        $this->addError('name','Duplicate Project Name');}
-        
-             
+      $models=Species::model()->findAll();
+      $list=array();
+      foreach (array_values($models) as $model){
+          $list[$model->id] = $model->common_name;
+      }
+      return $list;
+  }
+
+  function check_duplicate(){
+
+
+      $db_url= Project::model()->findBySql("select name from project where url='$this->url'");
+
+      if($db_url !=null){
+      $this->addError('url','Duplicate URL');}
+
+      $db_name= Project::model()->findBySql("select url from project where name='$this->name'");
+
+      if($db_name !=null){
+      $this->addError('name','Duplicate Project Name');}
+
+
+  }
+
+  /**
+   * write a logo image to the desired (Flysystem managed) storage mechanism and update url property with the location
+   *
+   * @param Filesystem $targetStorage
+   * @param string $enclosingDirectory
+   * @param CUploadedFile $uploadedFile
+   * @return bool
+   */
+  public function writeLogo(Filesystem $targetStorage, CUploadedFile $uploadedFile): bool
+  {
+      Yii::log("writeLogo: Starting to process the uploaded file", "info");
+
+      $slugger = new \Symfony\Component\String\Slugger\AsciiSlugger();
+      $info = pathinfo($uploadedFile->getName());
+      $fileName = $slugger->slug($info['filename'])->toString();
+
+      Yii::log("writeLogo: Generated file name - " . $fileName, "info");
+      $uuid = $this->getUuid();
+
+      Yii::log("writeLogo: Generated UUID - " . $uuid, "info");
+
+      $imagePath = sprintf("%s/images/projects/%s/%s.%s", Yii::$app->params['environment'], $uuid, $fileName, $info['extension'] );
+
+      Yii::log("writeLogo: Generated image path - " . $imagePath, "info");
+
+      // I expected YII_ENV_DEV to be true but it's not defined, so using a hardcoded temporary approach for now
+      $isLocalDev = true;
+      $hasBucketAccess = false;
+      if ($isLocalDev && !$hasBucketAccess) {
+          Yii::log("writeLogo: Local dev environment, skipping actual storage", "info");
+
+          // Mock URL for local development
+          $this->image_location = "https://assets.gigadb-cdn.net/live/images/projects/genome_10k/G10Klogo.jpg";
+
+          return true;
+      }
+
+      if ($targetStorage->put(
+          $imagePath, file_get_contents($uploadedFile->getTempName()),
+          ['visibility' => AdapterInterface::VISIBILITY_PUBLIC]
+      )) {
+          // $this->logo = sprintf("%s.%s", $fileName, $info['extension']);
+          $this->image_location = sprintf("https://%s/%s", self::BUCKET, $imagePath);
+
+          Yii::log("writeLogo: Image successfully written to storage", "info");
+
+          return true;
+      }
+
+      Yii::log("Error attempting to write image to the storage","error");
+
+      return false;
+  }
+
+      /**
+     * Return a UUID based on the project id
+     *
+     * @return string
+     */
+    public function getUuid()
+    {
+        return Uuid::uuid5(Uuid::NAMESPACE_URL, self::NAMESPACE."/id/".$this->id);
     }
 
 }

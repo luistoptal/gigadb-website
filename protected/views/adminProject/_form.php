@@ -4,6 +4,7 @@
 		<?php $form = $this->beginWidget('CActiveForm', array(
 			'id' => 'project-form',
 			'enableAjaxValidation' => false,
+      'htmlOptions' => array('enctype' => 'multipart/form-data'),
 		)); ?>
 
 		<p class="note">Fields with <span class="required">*</span> are required.</p>
@@ -43,8 +44,14 @@
 		// ]);
 		?>
 
+    <div class="form-group">
+        <?php echo $form->labelEx($model, 'image'); ?>
+        <?php echo $form->fileField($model, 'image'); ?>
+        <?php echo $form->error($model, 'image'); ?>
+    </div>
+
     <div id="vue-client_project-image-location">
-      display here vue widget
+      you should not see this text
     </div>
     <div>
       <script type="module" src="http://localhost:5173/@vite/client"></script>
