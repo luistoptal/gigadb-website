@@ -28,7 +28,7 @@ class Project extends CActiveRecord
 
   public static function getStorageBasePath()
   {
-    return Yii::$app->params['storageBaseUrl'];
+    return Yii::$app->params['storageBaseUrl'] ?? 'https://' . self::BUCKET;
   }
 
 	/**
