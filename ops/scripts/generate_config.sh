@@ -173,19 +173,19 @@ TARGET=${APP_SOURCE}/protected/config/db.json
 VARS='$GIGADB_DB:$GIGADB_HOST:$GIGADB_USER:$GIGADB_PASSWORD'
 envsubst $VARS < $SOURCE > $TARGET
 
-# Email configuration in web.php differs in dev, CI compared to staging, live 
-if [ $GIGADB_ENV = "dev" ] || [ $GIGADB_ENV = "CI" ];
-then
-  SOURCE=${APP_SOURCE}/ops/configuration/yii-conf/web.dev.CI.php.dist
-  TARGET=${APP_SOURCE}/protected/config/yii2/web.php
-  VARS='$SERVER_EMAIL_SMTP_HOST:$SERVER_EMAIL_SMTP_PORT:$SERVER_EMAIL:$SERVER_EMAIL_PASSWORD:$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY'
-  envsubst $VARS < $SOURCE > $TARGET
+
+# Email configuration in web.php differs in dev, CI compared to staging/live
+if [ "$GIGADB_ENV" = "CI" ]; then
+    SOURCE=${APP_SOURCE}/ops/configuration/yii-conf/web.CI.php.dist
+elif [ "$GIGADB_ENV" = "dev" ]; then
+    SOURCE=${APP_SOURCE}/ops/configuration/yii-conf/web.dev.php.dist
 else
-  SOURCE=${APP_SOURCE}/ops/configuration/yii-conf/web.staging.live.php.dist
-  TARGET=${APP_SOURCE}/protected/config/yii2/web.php
-  VARS='$SERVER_EMAIL_SMTP_HOST:$SERVER_EMAIL_SMTP_PORT:$SERVER_EMAIL:$SERVER_EMAIL_PASSWORD:$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY'
-  envsubst $VARS < $SOURCE > $TARGET
+    SOURCE=${APP_SOURCE}/ops/configuration/yii-conf/web.staging.live.php.dist
 fi
+
+TARGET=${APP_SOURCE}/protected/config/yii2/web.php
+VARS='$SERVER_EMAIL_SMTP_HOST:$SERVER_EMAIL_SMTP_PORT:$SERVER_EMAIL:$SERVER_EMAIL_PASSWORD:$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY'
+envsubst $VARS < $SOURCE > $TARGET
 
 SOURCE=${APP_SOURCE}/ops/configuration/yii-conf/test.php.dist
 TARGET=${APP_SOURCE}/protected/config/yii2/test.php

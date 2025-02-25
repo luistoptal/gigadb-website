@@ -19,4 +19,5 @@ return [
 		"spreadsheet_supported_format" => ["text/csv", "text/tab-separated-values"],
 	],
 	"docker_ssl" => false,
+  "storageBaseUrl" => (getenv('GIGADB_ENV') === 'dev') ? '/files' : 'https://assets.gigadb-cdn.net',
 ];

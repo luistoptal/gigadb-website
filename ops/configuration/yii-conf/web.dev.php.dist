@@ -1,0 +1,51 @@
+<?php
+
+$params = array_merge(
+    require __DIR__ . '/params.php',
+    require __DIR__ . '/params-local.php'
+);
+
+return [
+    'id' => 'GigaDB Web Site',
+    'basePath' => '/var/www',
+    'container' => [
+            'definitions' => [
+                'guzzleHttpClient' => [
+                    'class' => 'GuzzleHttp\Client',
+                ],
+            ]
+    ],
+    'components' => [
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'useFileTransport' => true,
+            'fileTransportPath'=>'/var/www/protected/runtime/mail',
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'encryption' => 'ssl',
+                'host' => '${SERVER_EMAIL_SMTP_HOST}',
+                'port' => '${SERVER_EMAIL_SMTP_PORT}',
+                'username' => '${SERVER_EMAIL}',
+                'password' => '${SERVER_EMAIL_PASSWORD}',
+            ],
+        ],
+        'jwt' => [
+            'class' => 'sizeg\jwt\Jwt',
+            'key'   => $params['jwt_key'],
+        ],
+        'fs' => [
+            'class' => 'creocoder\flysystem\LocalFilesystem',
+            'path' => '@webroot/files',
+        ],
+        'localStore' => [
+            'class' => 'creocoder\flysystem\LocalFilesystem',
+            'path' => '@webroot/images',
+        ],
+        'cloudStore' => [
+            'class' => 'creocoder\flysystem\LocalFilesystem',
+            'path' => '@webroot/files',
+          ],
+    ],
+    'params' => $params,
+];
+?>
