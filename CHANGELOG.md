@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+- Feat #513,#2190: Create meta tags based on environments
+
 ## v4.4.11 - 2025-05-21 - 4fdb2fb13 - 
 
 - Fix #531: Calculate the total volume of files and display it on the homepage
